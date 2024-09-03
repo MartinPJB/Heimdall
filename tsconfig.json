@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "target": "ES6",
+        "sourceMap": true,
+        "outDir": "./build",
+        "rootDir": "./",
+        "strict": true,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "allowImportingTsExtensions": true,
+    },
+    "include": [
+        "src/**/**/*",
+    ],
+}
