@@ -27,7 +27,17 @@ DiscordClient.on("interactionCreate", async interaction => {
 
     const command: Command | undefined = DiscordClient.registeredCommands?.filter(command => command.name === interaction.commandName)[0];
     if (!command) return;
-    return command.callback(DiscordClient, interaction);
+
+    const guildID = interaction.guildId!;
+    if (!guildID) {
+        interaction.reply({
+            ephemeral: true,
+            content: `❌ - <@${DiscordClient?.user?.id}> can only run on a server.`,
+        });
+        return;
+    }
+
+    return command.callback(DiscordClient, interaction, guildID);
 });
 
 // Login & Export

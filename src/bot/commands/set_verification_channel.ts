@@ -17,7 +17,7 @@ const setVerificationChannel: Command = {
         {
             name: "channel",
             description: "The chosen channel (must be readable for newcomers!)",
-            type: InteractionOptionTypes.CHANNEL, // Channel - Types:
+            type: InteractionOptionTypes.CHANNEL,
             required: true,
         }
     ],
@@ -26,12 +26,14 @@ const setVerificationChannel: Command = {
      * Interaction command callback
      * @param client - Bot client
      * @param interaction - Interaction
+     * @param guildID - The Guild's ID
      */
-    callback: async (client: HeimdallClient, interaction: ChatInputCommandInteraction) => {
+    callback: async (client: HeimdallClient, interaction: ChatInputCommandInteraction, guildID: string) => {
         const channel: TextChannel = interaction.options.getChannel("channel")!;
         const channelPermissions = interaction.guild?.members.me?.permissionsIn(channel.id)!;
         const canAccessChannel = (channelPermissions.has(PermissionFlagsBits.SendMessages) && channelPermissions.has(PermissionFlagsBits.ViewChannel));
 
+        // Can't access the channel chosen by the user
         if (!canAccessChannel) {
             interaction.reply({
                 ephemeral: true,
@@ -40,14 +42,14 @@ const setVerificationChannel: Command = {
             return;
         }
 
-        const currentConfig = client.database?.getGuildConfig(channel.guildId);
+        const currentConfig = client.database?.getGuildConfig(guildID);
         let guildConfig: HeimdallServerConfig = {
             verification_channel_id: channel.id,
             verified_role: currentConfig?.verified_role || "",
         };
 
         try {
-            await client.database?.setGuildConfig(channel.guildId, guildConfig);
+            await client.database?.setGuildConfig(guildID, guildConfig);
             interaction.reply({
                 ephemeral: true,
                 content: `🛡️ - Verification channel has been set to <#${channel.id}> successfully.`

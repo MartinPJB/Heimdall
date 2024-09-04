@@ -14,7 +14,7 @@ interface Command {
     description: string;
     default_member_permissions?: bigint | number; // Permissions can be a string or number
     options?: CommandOption[]; // An array of options
-    callback: (client: Client, options: ChatInputCommandInteraction) => Promise<void> | void; // The callback function
+    callback: (client: Client, options: ChatInputCommandInteraction, guildID: string) => Promise<void> | void; // The callback function
 };
 
 interface RegisterableCommand {
