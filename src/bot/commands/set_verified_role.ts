@@ -31,6 +31,7 @@ const setVerifiedRole: Command = {
     callback: async (client: HeimdallClient, interaction: ChatInputCommandInteraction, guildID: string) => {
         const role: Role = interaction.options.getRole("role")! as Role;
 
+        // Can't access role
         if (!role.editable) {
             interaction.reply({
                 ephemeral: true,
