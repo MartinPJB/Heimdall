@@ -1,6 +1,6 @@
 // Dependencies
 import _Database from "./database.ts";
-import { HeimdallServerConfig, Server, ServerConfig } from "./ts/types/DataTypes.ts";
+import { HeimdallServerConfig, Server, ServerConfig, User } from "./ts/types/DataTypes.ts";
 
 
 class HeimdallDB {
@@ -92,13 +92,13 @@ class HeimdallDB {
      */
     getGuildConfig(guild_id: string): HeimdallServerConfig | null {
         const guild = this.getGuild(guild_id);
-        const { config } = this.DatabaseClass.select("servers_config", ["config"], {
-            server_id: guild.id
-        })[0] as ServerConfig;
+        const serverConfig = this.DatabaseClass.select("servers_config", ["config"], { server_id: guild.id })[0] as ServerConfig;
+        const config = serverConfig ? serverConfig.config : null;
+
+        if (!config) return null;
 
         const exportedConfig: HeimdallServerConfig = JSON.parse(config);
-
-        return config ? exportedConfig : null;
+        return exportedConfig;
     }
 
     /**
@@ -121,6 +121,30 @@ class HeimdallDB {
             } catch(e) {
                 return rej(e);
             }
+        });
+    }
+
+    /**
+     * Get a user from the database from their discord ID
+     * @param discord_id - Discord ID of the user
+     * @returns - Registered user in the database
+     */
+    getUser(discord_id: string): User {
+        return this.DatabaseClass.select("users", ["*"], { discord_id })[0] as User;
+    }
+
+    /**
+     * Set a user to the database (if they exist in the DB, they will be updated)
+     * @param discord_id - Discord ID of the user
+     * @param fingerprint - Their registered fingerprint (optional)
+     */
+    setUser(discord_id: string, fingerprint: string = "NO_FINGERPRINT_REGISTERED"): Promise<boolean> {
+        return new Promise((res, rej) => {
+            const existingUser = this.getUser(discord_id);
+            if (!existingUser) this.DatabaseClass.insert("users", { discord_id, fingerprint });
+            else this.DatabaseClass.update("users", { fingerprint: fingerprint === "NO_FINGERPRINT_REGISTERED" ? existingUser.fingerprint : fingerprint }, { id: existingUser.id });
+
+            return res(true);
         });
     }
 }

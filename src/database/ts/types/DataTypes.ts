@@ -16,3 +16,10 @@ export type ServerConfig = {
     config: string;
     server_id: number;
 }
+
+// Users Type
+export type User = {
+    id: number;
+    discord_id: string;
+    fingerprint: string;
+}
