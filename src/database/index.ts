@@ -57,17 +57,6 @@ class HeimdallDB {
             ],
             additional: 'FOREIGN KEY("server_id") REFERENCES "servers"("id") ON DELETE CASCADE, FOREIGN KEY("user_id") REFERENCES "users"("id") ON DELETE CASCADE'
         });
-
-        // Create the verified_users table
-        this.DatabaseClass.createTable({
-            name: "verified_users",
-            columns: [
-                { name: "id", type: "INTEGER", primaryKey: true, autoIncrement: true },
-                { name: "server_id", type: "TEXT", notNull: true },
-                { name: "user_id", type: "TEXT", notNull: true }
-            ],
-            additional: 'FOREIGN KEY("server_id") REFERENCES "servers"("id") ON DELETE CASCADE, FOREIGN KEY("user_id") REFERENCES "users"("id") ON DELETE CASCADE'
-        });
     }
 
     /**
