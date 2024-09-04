@@ -37,7 +37,15 @@ DiscordClient.on("interactionCreate", async interaction => {
         return;
     }
 
-    return command.callback(DiscordClient, interaction, guildID);
+    try {
+        await command.callback(DiscordClient, interaction, guildID);
+    } catch(e) {
+        interaction.reply({
+            ephemeral: true,
+            content: `❌ - An error occured on the bot: \`\`\`${e}\`\`\``
+        });
+    }
+    return;
 });
 
 // Login & Export

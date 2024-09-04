@@ -48,18 +48,11 @@ const setVerificationChannel: Command = {
             verified_role: currentConfig?.verified_role || "",
         };
 
-        try {
-            await client.database?.setGuildConfig(guildID, guildConfig);
-            interaction.reply({
-                ephemeral: true,
-                content: `🛡️ - Verification channel has been set to <#${channel.id}> successfully.`
-            });
-        } catch(e) {
-            interaction.reply({
-                ephemeral: true,
-                content: `❌ - An error occured on the bot: \`\`\`${e}\`\`\``
-            });
-        }
+        await client.database?.setGuildConfig(guildID, guildConfig);
+        interaction.reply({
+            ephemeral: true,
+            content: `🛡️ - Verification channel has been set to <#${channel.id}> successfully.`
+        });
     }
 }
 
