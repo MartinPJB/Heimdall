@@ -55,7 +55,6 @@ const toggle: Command = {
 
         const currentConfig = client.database?.getGuildConfig(guildID);
         let guildConfig: HeimdallServerConfig = {
-            verification_channel_id: currentConfig?.verification_channel_id || "",
             verified_role: currentConfig?.verified_role || "",
             options: currentConfig?.options || {}
         };

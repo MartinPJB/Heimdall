@@ -6,7 +6,6 @@ export type Server = {
 
 // Heimdall Server Config Type
 export type HeimdallServerConfig = {
-    verification_channel_id: string;
     verified_role: string;
     options: Record<string, boolean>;
 }

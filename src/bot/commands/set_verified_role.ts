@@ -42,7 +42,6 @@ const setVerifiedRole: Command = {
 
         const currentConfig = client.database?.getGuildConfig(guildID);
         let guildConfig: HeimdallServerConfig = {
-            verification_channel_id: currentConfig?.verification_channel_id || "",
             verified_role: role.id,
             options: currentConfig?.options || {}
         };
