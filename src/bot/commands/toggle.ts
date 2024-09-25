@@ -1,7 +1,6 @@
 /* Command /toggle {Option} */
 // Dependencies
-import { ChatInputCommandInteraction, PermissionFlagsBits, InteractionOptionTypes } from "../../mod.ts";
-import { GuildMember, Role, User } from "discord.js";
+import { ChatInputCommandInteraction, InteractionOptionTypes } from "../../mod.ts";
 
 // Types & Interfaces
 import { Command } from "../ts/interfaces/Command.ts";
