@@ -33,7 +33,7 @@ const verify: Command = {
         const guildUser: GuildMember | undefined = interaction.guild?.members.cache.get(user.id);
 
         // No verified role has been set up in the config
-        const config = client.database?.getGuildConfig(guildID) as HeimdallServerConfig;
+        const config = await client.database?.getGuildConfig(guildID) as HeimdallServerConfig;
         if (!config || !config.verified_role) {
             interaction.reply({
                 ephemeral: true,

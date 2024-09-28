@@ -40,7 +40,7 @@ const setVerifiedRole: Command = {
             return;
         }
 
-        const currentConfig = client.database?.getGuildConfig(guildID);
+        const currentConfig = await client.database?.getGuildConfig(guildID) as HeimdallServerConfig;
         let guildConfig: HeimdallServerConfig = {
             verified_role: role.id,
             options: currentConfig?.options || {}

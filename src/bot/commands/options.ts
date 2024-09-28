@@ -20,7 +20,7 @@ const options: Command = {
      * @param guildID - The Guild's ID
      */
     callback: async (client: HeimdallClient, interaction: ChatInputCommandInteraction, guildID: string) => {
-        const { options = {}, verified_role = null } = client.database?.getGuildConfig(guildID) as HeimdallServerConfig || {};
+        const { options = {}, verified_role = null } = await client.database?.getGuildConfig(guildID) as HeimdallServerConfig || {};
 
         const availableOptions = HeimdallServerOptions.map((option) => {
             return {
