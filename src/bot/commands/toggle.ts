@@ -65,7 +65,7 @@ const toggle: Command = {
 
         interaction.reply({
             ephemeral: true,
-            content: `🛡️ - Option ${option} has been set to ${value ? "enabled" : "disabled"} successfully.`
+            content: `🛡️ - Option **${option}** has been \`${value ? "✅ enabled" : "❌ disabled"}\` successfully.`
         });
     }
 }
