@@ -32,6 +32,11 @@ export const HeimdallServerOptions = [
         description: "Allows the bot to protect the server from raids",
 		value: "anti_raid",
 	},
+    {
+        name: "Anti Phishing links",
+        description: "Detects and deletes phishing links provided with [Phishfort-lists](https://github.com/phishfort/phishfort-lists)",
+        value: "anti_phishing_links"
+    }
 ];
 
 // Servers_Config Table Type
