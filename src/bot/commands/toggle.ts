@@ -53,7 +53,8 @@ const toggle: Command = {
             return;
         }
 
-        const currentConfig = client.database?.getGuildConfig(guildID);
+        const currentConfig = await client.database?.getGuildConfig(guildID);
+
         let guildConfig: HeimdallServerConfig = {
             verified_role: currentConfig?.verified_role || "",
             options: currentConfig?.options || {}
