@@ -1,14 +1,21 @@
 // Dependencies
+import NodeCache from "node-cache";
 import _Database from "./database.ts";
 import { HeimdallServerConfig, Server, ServerConfig, User } from "./ts/types/DataTypes.ts";
 
 
 class HeimdallDB {
     private DatabaseClass!: _Database;
+    private GuildConfigCache: NodeCache;
+    private GuildsCache: NodeCache;
 
     constructor() {
         this.DatabaseClass = new _Database();
         this.DatabaseClass.init();
+
+        // Caches for the guilds and their configs
+        this.GuildConfigCache = new NodeCache({ stdTTL: 600 }); // Every 10 minutes
+        this.GuildsCache = new NodeCache({ stdTTL: 3600 }); // Every hour
 
         this.createDefaultTables();
     }
@@ -65,7 +72,13 @@ class HeimdallDB {
      * @returns - guild_id
      */
     getGuild(guild_id: string): Server {
-        return this.DatabaseClass.select("servers", ["id", "guild_id"], { guild_id })[0] as Server;
+        const cachedGuild = this.GuildsCache.get(guild_id);
+        if (cachedGuild) return cachedGuild as Server;
+
+        const guild = this.DatabaseClass.select("servers", ["id", "guild_id"], { guild_id })[0] as Server;
+        this.GuildsCache.set(guild_id, guild);
+
+        return guild;
     }
 
     /**
@@ -90,14 +103,21 @@ class HeimdallDB {
      * @param guild_id - The guild's ID
      * @returns - The servers' config
      */
-    getGuildConfig(guild_id: string): HeimdallServerConfig | null {
+    async getGuildConfig(guild_id: string): Promise<HeimdallServerConfig | null> {
         const guild = this.getGuild(guild_id);
+        const cachedConfig = this.GuildConfigCache.get<HeimdallServerConfig>(guild.id);
+
+        if (cachedConfig) return cachedConfig; // Returns the cached config if existing.
+
+        // Else, we get it from the DB and of course, set it in the cache.
         const serverConfig = this.DatabaseClass.select("servers_config", ["config"], { server_id: guild.id })[0] as ServerConfig;
         const config = serverConfig ? serverConfig.config : null;
 
         if (!config) return null;
 
         const exportedConfig: HeimdallServerConfig = JSON.parse(config);
+        this.GuildConfigCache.set(guild.id, exportedConfig);
+
         return exportedConfig;
     }
 
@@ -117,6 +137,8 @@ class HeimdallDB {
                 if (!existingConfig) this.DatabaseClass.insert("servers_config", { server_id: guild.id, config: stringify });
                 else this.DatabaseClass.update("servers_config", { config: stringify }, { server_id: guild.id });
 
+                // Updates the config cache
+                this.GuildConfigCache.set(guild.id, stringify);
                 return res(true);
             } catch(e) {
                 return rej(e);
