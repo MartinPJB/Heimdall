@@ -57,7 +57,9 @@ export default async function phishingLinksCheck(message: Message) {
         if (blacklist.includes(url)) {
             if (message.deletable) {
                 await message.delete();
-                await message.channel.send(`${message.author} - **Phishing links are not allowed in the chat. Please refrain from sending those.** ❌`);
+                const botMessage = await message.channel.send(`${message.author} - **Phishing links are not allowed in the chat. Please refrain from sending those.** ❌`);
+
+                setTimeout(() => botMessage.delete(), 5000);
             }
 
             break;
