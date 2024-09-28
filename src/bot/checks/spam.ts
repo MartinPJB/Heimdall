@@ -5,7 +5,7 @@ import SpamDetector from "./classes/SpamDetector.ts";
 
 // Functions
 /**
- * Checks if any phishing link is sent on discord.
+ * Checks if someone is spamming on discord
  * @param message - Message object from discord
  * @returns - Nothing
  */
