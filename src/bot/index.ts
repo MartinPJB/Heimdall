@@ -11,6 +11,7 @@ import { Message } from 'discord.js';
 
 // Checks
 import phishingLinksCheck from './checks/phishing_links.ts';
+import spamCheck from './checks/spam.ts';
 
 // Variables
 const DiscordClient: HeimdallClient = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
@@ -69,6 +70,7 @@ async function HeimdallChecks(message: Message) {
 
     // Proceeds to check for phishing links, spam, etc...
     if (options.anti_phishing_links) phishingLinksCheck(message);
+    if (options.spam_protection) spamCheck(message);
 }
 
 DiscordClient.on("messageCreate", HeimdallChecks);
