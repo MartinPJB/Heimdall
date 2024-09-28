@@ -137,8 +137,8 @@ class HeimdallDB {
                 if (!existingConfig) this.DatabaseClass.insert("servers_config", { server_id: guild.id, config: stringify });
                 else this.DatabaseClass.update("servers_config", { config: stringify }, { server_id: guild.id });
 
-                // Updates the config cache
-                this.GuildConfigCache.set(guild.id, stringify);
+                // Invalidates the existing config cache
+                this.GuildConfigCache.del(guild.id);
                 return res(true);
             } catch(e) {
                 return rej(e);
