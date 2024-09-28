@@ -5,10 +5,7 @@ import { ChatInputCommandInteraction } from "../../mod.ts";
 // Types & Interfaces
 import { Command } from "../ts/interfaces/Command.ts";
 import { HeimdallClient } from "../ts/interfaces/Heimdall.ts";
-import {
-    HeimdallServerConfig,
-    HeimdallServerOptions,
-} from "../../database/ts/types/DataTypes.ts";
+import { HeimdallServerConfig, HeimdallServerOptions } from "../../database/ts/types/DataTypes.ts";
 
 // Command
 const options: Command = {
@@ -23,12 +20,16 @@ const options: Command = {
      * @param guildID - The Guild's ID
      */
     callback: async (client: HeimdallClient, interaction: ChatInputCommandInteraction, guildID: string) => {
-        const { options, verified_role } = client.database?.getGuildConfig(guildID) as HeimdallServerConfig;
+        const config = client.database?.getGuildConfig(guildID) as HeimdallServerConfig;
+        let options = null, verified_role = null;
+
+        if (config) options = config.options, verified_role = config.verified_role;
+
         const availableOptions = HeimdallServerOptions.map((option) => {
             return {
                 name: option.name,
                 description: option.description,
-                value: options[option.value] ? "`✅ Enabled`" : "`❌ Disabled`",
+                value: options?.[option.value] ? "`✅ Enabled`" : "`❌ Disabled`",
             };
         });
 
