@@ -61,12 +61,17 @@ export default class _Database {
      */
     insert(table: string, data: Record<string, unknown>) {
         const columns = Object.keys(data).join(", ");
-        const values = Object.values(data);
+        const values = Object.values(data).map(value => {
+            if (typeof value === "object") return JSON.stringify(value);
+            return value;
+        });
         const placeholders = values.map(() => "?").join(", ");
 
         const query =
             `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`;
-        this.db.prepare(query).run(...values);
+
+        console.log(query, values);
+        return this.db.prepare(query).run(...values);
     }
 
     /**
@@ -95,6 +100,38 @@ export default class _Database {
     }
 
     /**
+     * Selects data from multiple tables with JOIN operations.
+     * @param table - The main table to select from.
+     * @param joinClause - A string representing the JOIN conditions.
+     * @param columns - The columns to retrieve (default is all columns).
+     * @param where - An object representing the WHERE conditions (optional).
+     * @example
+     * db.selectJoin(
+     *     'users',
+     *     'JOIN orders ON users.id = orders.user_id',
+     *     ['users.id', 'users.name', 'orders.amount'],
+     *     { 'users.isFollower': 1 }
+     * );
+     * @returns An array of objects representing the selected rows.
+     */
+    selectJoin(
+        table: string,
+        joinClause: string,
+        columns: string[] = ["*"],
+        where: Record<string, unknown> = {},
+    ): unknown[] {
+        const columnString = columns.join(", ");
+        const whereKeys = Object.keys(where);
+        const whereClause = whereKeys.length > 0
+            ? "WHERE " + whereKeys.map((key) => `${key} = ?`).join(" AND ")
+            : "";
+        const values = Object.values(where);
+
+        const query = `SELECT ${columnString} FROM ${table} ${joinClause} ${whereClause}`;
+        return this.db.prepare(query).all(...values);
+    }
+
+    /**
      * Updates data in a table.
      * @param table - The name of the table to update.
      * @param data - An object representing the columns and new values.
@@ -110,7 +147,10 @@ export default class _Database {
         const setString = Object.keys(data).map((key) => `${key} = ?`).join(
             ", ",
         );
-        const values = Object.values(data);
+        const values = Object.values(data).map(value => {
+            if (typeof value === "object") return JSON.stringify(value);
+            return value;
+        });
         const whereKeys = Object.keys(where);
         const whereClause = whereKeys.length > 0
             ? "WHERE " + whereKeys.map((key) => `${key} = ?`).join(" AND ")
@@ -118,7 +158,7 @@ export default class _Database {
         const whereValues = Object.values(where);
 
         const query = `UPDATE ${table} SET ${setString} ${whereClause}`;
-        this.db.prepare(query).run(...values, ...whereValues);
+        return this.db.prepare(query).run(...values, ...whereValues);
     }
 
     /**
