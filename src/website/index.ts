@@ -9,7 +9,7 @@ import AuthRoutes from "./routes/AuthRoutes.ts";
 
 // Variables
 const server = Fastify({
-    logger: true
+    logger: false // true
 });
 
 
